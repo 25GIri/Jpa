@@ -1,0 +1,107 @@
+//Create one to one Bi-directional between Employee and library membership &
+          Employee (id, name)
+          LibraryMembership ( store id, membership type, start date)
+
+
+
+package com.example.q7_employee_membership;
+import jakarta.persistence.*;
+@Entity
+@Table(name = "employees")
+public class Employee {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    @OneToOne(
+            mappedBy = "employee",
+            cascade = CascadeType.ALL
+    )
+    private LibraryMembership membership;
+
+    public Employee() {}
+
+    public Employee(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public void setMembership(
+            LibraryMembership membership) {
+        this.membership = membership;
+    }
+}
+
+
+
+
+package com.example.q7_employee_membership;
+import jakarta.persistence.*;
+import java.time.*;
+@Entity
+@Table(name = "library_memberships")
+public class LibraryMembership {
+
+    @Id
+    private Long storeId;
+
+    private String membershipType;
+
+    private LocalDate startDate;
+
+    @OneToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
+
+    public LibraryMembership() {}
+
+    public LibraryMembership(Long storeId,String membershipType,LocalDate startDate) {
+        this.storeId = storeId;
+        this.membershipType = membershipType;
+        this.startDate = startDate;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+}
+
+
+
+
+package com.example.q7_employee_membership;
+
+import jakarta.persistence.*;
+import java.time.*;
+
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        Employee emp = new Employee(1L, "John");
+
+        LibraryMembership membership = new LibraryMembership( 100L,"Gold",LocalDate.now());
+
+        emp.setMembership(membership);
+
+        membership.setEmployee(emp);
+
+        em.getTransaction().begin();
+
+        em.persist(emp);
+
+        em.getTransaction().commit();
+
+        System.out.println("Employee Saved");
+
+        em.close();
+
+        emf.close();
+    }
+}
