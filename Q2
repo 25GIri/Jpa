@@ -1,0 +1,96 @@
+//Deal with transaction taking two products" Commit / Rod back + handle exception.
+
+package com.example.q2_transaction;
+import jakarta.persistence.*;
+@Entity
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    private double price;
+
+    public Product() {
+    }
+
+    public Product(Long id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+}
+
+
+
+package com.example.q2_transaction;
+import jakarta.persistence.*;
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+
+            tx.begin();
+
+            Product p1 = new Product(1L, "Laptop", 50000);
+
+            Product p2 = new Product(2L, "Mouse", 500);
+
+            em.persist(p1);
+
+            em.persist(p2);
+
+            tx.commit();
+
+            System.out.println("Transaction Committed");
+
+        } catch (Exception e) {
+
+            tx.rollback();
+
+            System.out.println("Transaction Rolled Back");
+
+            e.printStackTrace();
+        }
+
+        em.close();
+
+        emf.close();
+    }
+}
+
+
+
