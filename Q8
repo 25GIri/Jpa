@@ -1,0 +1,100 @@
+//8. Order, products, odderproducts, using many-to-many.
+
+
+package com.example.q8_order_products;
+import jakarta.persistence.*;
+import java.util.*;
+@Entity
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    @ManyToMany(mappedBy = "products")
+    private List<Order> orders = new ArrayList<>();
+
+    public Product() {}
+
+    public Product(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
+
+
+
+
+package com.example.q8_order_products;
+import jakarta.persistence.*;
+import java.util.*;
+@Entity
+@Table(name = "orders")
+public class Order {
+
+    @Id
+    private Long id;
+
+    @ManyToMany(
+            cascade = CascadeType.ALL
+    )
+    @JoinTable(
+            name = "order_products",
+            joinColumns =
+            @JoinColumn(name = "order_id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "product_id")
+    )
+    private List<Product> products = new ArrayList<>();
+
+    public Order() {}
+
+    public Order(Long id) {
+        this.id = id;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+}
+
+
+
+
+
+package com.example.q8_order_products;
+import jakarta.persistence.*;
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        Order order = new Order(1L);
+
+        Product p1 = new Product(101L, "Laptop");
+
+        Product p2 = new Product(102L, "Mouse");
+
+        order.getProducts().add(p1);
+
+        order.getProducts().add(p2);
+
+        em.getTransaction().begin();
+
+        em.persist(order);
+
+        em.getTransaction().commit();
+
+        System.out.println("Order Saved");
+
+        em.close();
+
+        emf.close();
+    }
+}
