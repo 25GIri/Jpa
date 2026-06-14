@@ -1,0 +1,102 @@
+//One to Many between product & Sales.
+
+
+package com.example.q6_product_sales;
+import jakarta.persistence.*;
+import java.util.*;
+@Entity
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL
+    )
+    private List<Sale> sales = new ArrayList<>();
+
+    public Product() {}
+
+    public Product(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public List<Sale> getSales() {
+        return sales;
+    }
+}
+
+
+
+
+package com.example.q6_product_sales;
+import jakarta.persistence.*;
+@Entity
+@Table(name = "sales")
+public class Sale {
+
+    @Id
+    private Long id;
+
+    private int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    public Sale() {}
+
+    public Sale(Long id, int quantity) {
+        this.id = id;
+        this.quantity = quantity;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+}
+
+
+
+package com.example.q6_product_sales;
+import jakarta.persistence.*;
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        Product product = new Product(1L, "Laptop");
+
+        Sale s1 = new Sale(101L, 2);
+
+        Sale s2 = new Sale(102L, 3);
+
+        s1.setProduct(product);
+
+        s2.setProduct(product);
+
+        product.getSales().add(s1);
+
+        product.getSales().add(s2);
+
+        em.getTransaction().begin();
+
+        em.persist(product);
+
+        em.getTransaction().commit();
+
+        System.out.println("Product Saved");
+
+        em.close();
+
+        emf.close();
+    }
+}
