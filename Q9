@@ -1,0 +1,114 @@
+//Add tostring() to offline & Online Course tables.
+
+
+package com.example.q9_course_tostring;
+import jakarta.persistence.*;
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Course {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    public Course() {}
+
+    public Course(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+
+
+
+package com.example.q9_course_tostring;
+import jakarta.persistence.*;
+@Entity
+public class OfflineCourse extends Course {
+
+    private String location;
+
+    public OfflineCourse() {}
+
+    public OfflineCourse(Long id, String name, String location) {
+        super(id, name);
+        this.location = location;
+    }
+
+    @Override
+    public String toString() {
+        return "OfflineCourse{id=" + getId() + ", name='" + getName() + "', location='" + location + "'}";
+    }
+}
+
+
+
+package com.example.q9_course_tostring;
+import jakarta.persistence.*;
+@Entity
+public class OnlineCourse extends Course {
+
+    private String url;
+
+    public OnlineCourse() {}
+    public OnlineCourse(Long id, String name, String url) { 
+         super(id, name);
+         this.url = url;
+    }
+
+   @Override
+   public String toString() { 
+         return "OnlineCourse{id=" + getId() + ", name='" + getName() + "', url='" + url + "'}"; 
+   }
+}
+
+
+
+
+
+
+package com.example.q9_course_tostring;
+
+import jakarta.persistence.*;
+
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        OnlineCourse online = new OnlineCourse(1L, "AWS", "meet.google.com/aws");
+
+        OfflineCourse offline = new OfflineCourse(2L, "Java", "Hyderabad");
+
+        em.getTransaction().begin();
+
+        em.persist(online);
+
+        em.persist(offline);
+
+        em.getTransaction().commit();
+
+        System.out.println(online);
+
+        System.out.println(offline);
+
+        em.close();
+
+        emf.close();
+    }
+}
+
+
