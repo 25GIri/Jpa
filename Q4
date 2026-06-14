@@ -1,0 +1,104 @@
+//Create an entity to represent a product which Contains product id, name, price and features. display name, price & features.
+
+package com.example.q4_product_features;
+import jakarta.persistence.*;
+import java.util.*;
+@Entity
+@Table(name = "products")
+public class Product {
+
+    @Id
+    private Long productId;
+
+    private String name;
+
+    private double price;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "product_features",
+            joinColumns =
+            @JoinColumn(name = "product_id")
+    )
+    @Column(name = "feature")
+     private List<String> features = new ArrayList<>();
+
+     public Product() {}
+
+    public Product(Long productId, String name, double price) {
+        this.productId = productId;
+        this.name = name;
+        this.price = price;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public List<String> getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(List<String> features) {
+        this.features = features;
+    }
+}
+
+
+
+
+
+
+package com.example.q4_product_features;
+import jakarta.persistence.*;
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        Product p = new Product(101L, "Laptop", 50000);
+
+        p.getFeatures().add("16GB RAM");
+        p.getFeatures().add("512GB SSD");
+        p.getFeatures().add("Intel i7");
+
+        em.getTransaction().begin();
+
+        em.persist(p);
+
+        em.getTransaction().commit();
+
+        System.out.println(p.getName());
+
+        System.out.println(p.getPrice());
+
+        System.out.println(p.getFeatures());
+
+        em.close();
+
+        emf.close();
+    }
+}
