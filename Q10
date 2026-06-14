@@ -1,0 +1,64 @@
+// One example for QueryByCriteria & retrieve titles where price is between 10 & 20.
+
+package com.example.q10_criteria_query;
+import jakarta.persistence.*;
+@Entity
+@Table(name = "titles")
+public class Title {
+
+    @Id
+    private Long id;
+
+    private String titleName;
+
+    private double price;
+
+    public Title() {}
+
+    public Title(Long id, String titleName, double price) {
+        this.id = id;
+        this.titleName = titleName;
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Title{id=" + id + ", titleName='" + titleName + "', price=" + price + "}";
+    }
+}
+
+
+
+
+package com.example.q10_criteria_query;
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.*;
+import java.util.*;
+
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Title> cq = cb.createQuery(Title.class);
+
+        Root<Title> root = cq.from(Title.class);
+
+        cq.select(root)
+          .where(cb.between(root.get("price"), 10.0, 20.0));
+
+        List<Title> titles = em.createQuery(cq).getResultList();
+
+        for (Title t : titles)
+            System.out.println(t);
+
+        em.close();
+
+        emf.close();
+    }
+}
