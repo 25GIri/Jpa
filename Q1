@@ -1,0 +1,97 @@
+//Create a table customer with Cust email, name, mobile no & create an entity to map the table.
+
+package com.example.q1_customer;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "customer")
+public class Customer {
+
+    @Id
+    private String email;
+
+    private String name;
+
+    @Column(name = "mobile_no")
+    private String mobileNo;
+
+    public Customer() {
+    }
+
+    public Customer(
+            String email,
+            String name,
+            String mobileNo) {
+
+        this.email = email;
+        this.name = name;
+        this.mobileNo = mobileNo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(
+            String email) {
+
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(
+            String name) {
+
+        this.name = name;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(
+            String mobileNo) {
+
+        this.mobileNo = mobileNo;
+    }
+}
+
+
+
+
+package com.example.q1_customer;
+
+import jakarta.persistence.*;
+
+public class MainApp {
+
+    public static void main(
+            String[] args) {
+
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory(
+                        "myPU");
+
+        EntityManager em =
+                emf.createEntityManager();
+
+        Customer customer =
+                new Customer(
+                        "john@gmail.com",
+                        "John",
+                        "9876543210");
+
+        em.getTransaction().begin();
+
+        em.persist(customer);
+
+        em.getTransaction().commit();
+
+        em.close();
+        emf.close();
+    }
+}
