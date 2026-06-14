@@ -1,9 +1,7 @@
 //Create a table customer with Cust email, name, mobile no & create an entity to map the table.
 
 package com.example.q1_customer;
-
 import jakarta.persistence.*;
-
 @Entity
 @Table(name = "customer")
 public class Customer {
@@ -19,11 +17,7 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(
-            String email,
-            String name,
-            String mobileNo) {
-
+    public Customer(String email, String name, String mobileNo) {
         this.email = email;
         this.name = name;
         this.mobileNo = mobileNo;
@@ -33,9 +27,7 @@ public class Customer {
         return email;
     }
 
-    public void setEmail(
-            String email) {
-
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -43,9 +35,7 @@ public class Customer {
         return name;
     }
 
-    public void setName(
-            String name) {
-
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -53,9 +43,7 @@ public class Customer {
         return mobileNo;
     }
 
-    public void setMobileNo(
-            String mobileNo) {
-
+    public void setMobileNo(String mobileNo) {
         this.mobileNo = mobileNo;
     }
 }
@@ -64,26 +52,16 @@ public class Customer {
 
 
 package com.example.q1_customer;
-
 import jakarta.persistence.*;
-
 public class MainApp {
 
-    public static void main(
-            String[] args) {
+    public static void main(String[] args) {
 
-        EntityManagerFactory emf =
-                Persistence.createEntityManagerFactory(
-                        "myPU");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
 
-        EntityManager em =
-                emf.createEntityManager();
+        EntityManager em = emf.createEntityManager();
 
-        Customer customer =
-                new Customer(
-                        "john@gmail.com",
-                        "John",
-                        "9876543210");
+        Customer customer = new Customer("john@gmail.com", "John", "9876543210");
 
         em.getTransaction().begin();
 
@@ -91,7 +69,10 @@ public class MainApp {
 
         em.getTransaction().commit();
 
+        System.out.println("Customer Saved");
+
         em.close();
+
         emf.close();
     }
 }
