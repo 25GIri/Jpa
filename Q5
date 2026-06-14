@@ -1,0 +1,195 @@
+//One to many between publisher & (use Uni-dir, bi-dir) titles.
+
+//UNI-DIRECTIONAL
+
+package com.example.unidirectional;
+import jakarta.persistence.*;
+import java.util.*;
+@Entity
+public class Publisher {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "publisher_id")
+    private List<Title> titles = new ArrayList<>();
+
+    public Publisher() {}
+
+    public Publisher(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public List<Title> getTitles() {
+        return titles;
+    }
+}
+
+
+
+
+package com.example.unidirectional;
+import jakarta.persistence.*;
+@Entity
+public class Title {
+
+    @Id
+    private Long id;
+
+    private String titleName;
+
+    private double price;
+
+    public Title() {}
+
+    public Title(Long id, String titleName, double price) {
+        this.id = id;
+        this.titleName = titleName;
+        this.price = price;
+    }
+}
+
+
+
+
+package com.example.unidirectional;
+
+import jakarta.persistence.*;
+
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        Publisher publisher = new Publisher(1L, "Pearson");
+
+        Title t1 = new Title(101L, "Java", 500);
+
+        Title t2 = new Title(102L, "Hibernate", 600);
+
+        publisher.getTitles().add(t1);
+        publisher.getTitles().add(t2);
+
+        em.getTransaction().begin();
+
+        em.persist(publisher);
+
+        em.getTransaction().commit();
+
+        em.close();
+
+        emf.close();
+    }
+}
+
+
+
+
+
+
+//BI-DIRECTIONAL
+
+
+package com.example.bidirectional;
+import jakarta.persistence.*;
+import java.util.*;
+@Entity
+public class Publisher {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    @OneToMany(
+            mappedBy = "publisher",
+            cascade = CascadeType.ALL)
+    private List<Title> titles = new ArrayList<>();
+
+    public Publisher() {}
+
+    public Publisher(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public List<Title> getTitles() {
+        return titles;
+    }
+}
+
+
+
+
+package com.example.bidirectional;
+import jakarta.persistence.*;
+@Entity
+public class Title {
+
+    @Id
+    private Long id;
+
+    private String titleName;
+
+    private double price;
+
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
+
+    public Title() {}
+
+    public Title(Long id, String titleName, double price) {
+        this.id = id;
+        this.titleName = titleName;
+        this.price = price;
+    }
+
+    public void setPublisher(Publisher publisher) {
+        this.publisher = publisher;
+    }
+}
+
+
+
+
+package com.example.bidirectional;
+import jakarta.persistence.*;
+public class MainApp {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+
+        EntityManager em = emf.createEntityManager();
+
+        Publisher publisher = new Publisher(1L, "Pearson");
+
+        Title t1 = new Title(101L, "Java", 500);
+
+        Title t2 = new Title(102L, "Hibernate", 600);
+
+        t1.setPublisher(publisher);
+        t2.setPublisher(publisher);
+
+        publisher.getTitles().add(t1);
+        publisher.getTitles().add(t2);
+
+        em.getTransaction().begin();
+
+        em.persist(publisher);
+
+        em.getTransaction().commit();
+
+        em.close();
+
+        emf.close();
+    }
+}
